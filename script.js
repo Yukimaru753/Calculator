@@ -79,23 +79,65 @@ numberButtons.forEach((button) =>
 // 　演算子が-のとき
 //　　　displayContentに-を代入する
 // 　IFEND
+// ELSE IF
+// displayContentの最後の2文字が*-,/-のとき
+// 　演算子を上書き保存
+// 　displayContentの最後の2文字を削除
+// 　displayContentに演算子を追加
+// ELSE IF
+// displayContentの最後の文字が+,-のとき
+// 　演算子を上書き保存
+// 　displayContentの最後の文字を削除
+// 　displayContentに演算子を追加
+// ELSE IF
+// displayContentの最後の文字が*,/のとき
+//   IF
+// 　入力した演算子が-のとき
+// 　　displayContentに-を追加
+// 　ELSE
+// 　　演算子を上書き保存
+// 　　displayContentの最後の文字を削除
+// 　　displayContentに演算子を追加
+//   IFEND
 // ELSE
-// displayContentが0以外のとき
+// displayContentが0以外の数字のとき
 // 　演算子を保存
-// 　displayContentに追加
+// 　displayContentに演算子を追加
 // IFEND
-// displayに表示
+// displayContentを表示
 operatorButtons.forEach((button) =>
-    button.addEventListener("click", (event) => {
-        const buttonText = event.target.textContent;
-        if (displayContent === "0") {
-            if (buttonText === "-") {
-                displayContent = buttonText;
-            }
-        } else {
-            operator = buttonText;
-            displayContent += buttonText;
-        }
-        display.textContent = displayContent;
-    }),
+  button.addEventListener("click", (event) => {
+    const buttonText = event.target.textContent;
+    if (displayContent === "0") {
+      if (buttonText === "-") {
+        displayContent = buttonText;
+      }
+    } else if (
+      displayContent.slice(-2) === "*-" ||
+      displayContent.slice(-2) === "/-"
+    ) {
+      operator = buttonText;
+      displayContent = displayContent.slice(0, -2) + buttonText;
+    } else if (
+      displayContent.slice(-1) === "+" ||
+      displayContent.slice(-1) === "-"
+    ) {
+      operator = buttonText;
+      displayContent = displayContent.slice(0, -1) + buttonText;
+    } else if (
+      displayContent.slice(-1) === "*" ||
+      displayContent.slice(-1) === "/"
+    ) {
+      if (buttonText === "-") {
+        displayContent += buttonText;
+      } else {
+        operator = buttonText;
+        displayContent = displayContent.slice(0, -1) + buttonText;
+      }
+    } else {
+      operator = buttonText;
+      displayContent += buttonText;
+    }
+    display.textContent = displayContent;
+  }),
 );
