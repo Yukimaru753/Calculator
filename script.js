@@ -37,10 +37,10 @@ function operate(operator, a, b) {
 // 入力と結果が表示される画面
 const display = document.querySelector(".display");
 
-// 数字のボタン
+// 数字のボタンのノードリスト
 const numberButtons = document.querySelectorAll(".number");
 
-// 演算子のボタン
+// 演算子のボタンのノードリスト
 const operatorButtons = document.querySelectorAll(".operator");
 
 // イコールのボタン
@@ -68,6 +68,60 @@ let isCalculated = false;
 
 // 演算子の後に0が入力されたときtrueになる
 let isAfterOperator = false;
+
+// キーボード入力設定
+// event.keyをみる
+// 対応するbuttonをクリック
+document.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "Enter":
+      equalButton.click();
+      break;
+    case "Backspace":
+      backSpaceButton.click();
+      break;
+    case ".":
+      commaButton.click();
+      break;
+    case "Escape":
+      clearButton.click();
+      break;
+    case "1":
+    case "2":
+    case "3":
+    case "4":
+    case "5":
+    case "6":
+    case "7":
+    case "8":
+    case "9":
+    case "0":
+      clickNumButton(event.key);
+      break;
+    case "+":
+    case "-":
+    case "*":
+    case "/":
+      clickOprButton(event.key);
+      break;
+    default:
+      break;
+  }
+});
+
+// keyに対応する数字のボタンをクリックする関数
+function clickNumButton(key) {
+  Array.from(numberButtons)
+    .find((button) => button.textContent === key)
+    .click();
+}
+
+// keyに対応する演算子のボタンをクリックする関数
+function clickOprButton(key) {
+  Array.from(operatorButtons)
+    .find((button) => button.textContent === key)
+    .click();
+}
 
 // 数字ボタンが押された時の処理
 // displayに表示される文字列を更新する関数が発動
@@ -146,6 +200,10 @@ numberButtons.forEach((button) =>
 // 　IFEND
 // ELSE IF
 //  displayContentの最後の2文字が*-,/-のとき
+//  IF
+//   入力した演算子が-
+//   なにもしない
+//  IFEND
 //  演算子を上書き保存
 //  displayContentの最後の2文字を削除
 //  displayContentに演算子を追加
@@ -187,6 +245,9 @@ operatorButtons.forEach((button) =>
       displayContent.slice(-2) === "*-" ||
       displayContent.slice(-2) === "/-"
     ) {
+      if (buttonText === "-") {
+        return;
+      }
       operator = buttonText;
       displayContent = displayContent.slice(0, -2) + buttonText;
     } else if (
