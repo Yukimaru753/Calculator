@@ -49,6 +49,9 @@ const equalButton = document.querySelector(".equal");
 // クリアのボタン
 const clearButton = document.querySelector(".clear");
 
+// バックスペースボタン
+const backSpaceButton = document.querySelector(".backSpace");
+
 // 小数点のボタン
 const commaButton = document.querySelector(".comma");
 
@@ -275,7 +278,20 @@ clearButton.addEventListener("click", () => {
   isCalculated = false;
 });
 
-function clear() {}
+// バックスペースボタンが押された時の処理
+// IF
+//  一文字の時は0を表示する
+// IFEND
+// 直前の文字を削除
+// displayに表示
+backSpaceButton.addEventListener("click", () => {
+  if (displayContent.length === 1) {
+    displayContent = "0";
+  } else {
+    displayContent = displayContent.slice(0, -1);
+  }
+  display.textContent = displayContent;
+});
 
 // イコールボタンが押された時の処理(数字2つと演算子1つの場合)
 // IF
@@ -290,7 +306,7 @@ function clear() {}
 // displayに表示
 
 equalButton.addEventListener("click", () => {
-    // 計算直後に押された場合動作を終了
+  // 計算直後に押された場合動作を終了
   if (isCalculated) {
     return;
   }
