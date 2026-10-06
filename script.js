@@ -75,6 +75,7 @@ let isAfterOperator = false;
 document.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "Enter":
+    case "=":
       equalButton.click();
       break;
     case "Backspace":
