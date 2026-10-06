@@ -226,6 +226,10 @@ operatorButtons.forEach((button) =>
 //  isAfterOperatorをfalseに戻す
 // IFEND
 // IF
+//  isCalculated = trueのとき
+//  falseに戻す
+// IFEND
+// IF
 //  isDecimal = trueのとき
 //  IF
 //   displayContentの直前の文字が演算子のとき
@@ -248,6 +252,9 @@ commaButton.addEventListener("click", (event) => {
 
   if (isAfterOperator) {
     isAfterOperator = false;
+  }
+  if (isCalculated) {
+    isCalculated = false;
   }
   if (isDecimal) {
     //直前の文字が演算子のときは0.を追加
