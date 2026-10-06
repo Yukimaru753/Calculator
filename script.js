@@ -196,3 +196,13 @@ commaButton.addEventListener("click", (event) => {
     display.textContent = displayContent;
   }
 });
+
+// クリアボタンが押された時の処理
+// displayContentを初期化
+// displayに表示
+// operatorを初期化
+clearButton.addEventListener("click", () => {
+    displayContent = "0";
+    display.textContent = displayContent;
+    operator = null;
+})
