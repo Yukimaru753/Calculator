@@ -18,17 +18,17 @@ function divide(a, b) {
   return "error";
 }
 
-// 演算子と二つの数字を受け取り、対応する関数を呼び出す関数
+// 演算子と二つの数字を受け取り、対応する関数を呼び出し、計算結果を文字列で返す関数
 function operate(operator, a, b) {
   switch (operator) {
     case "+":
-      return add(a, b);
+      return String(add(a, b));
     case "-":
-      return subtract(a, b);
+      return String(subtract(a, b));
     case "*":
-      return multiply(a, b);
+      return String(multiply(a, b));
     case "/":
-      return divide(a, b);
+      return String(divide(a, b));
     default:
       return "error";
   }
@@ -60,12 +60,35 @@ display.textContent = displayContent;
 // あとで演算子を複数保存できるようにする
 let operator = null;
 
+// 計算後にtrueになる
+let isCalculated = false;
+
+// 演算子の後に0が入力されたときtrueになる
+let isAfterOperator = false;
+
 // 数字ボタンが押された時の処理
 // displayに表示される文字列を更新する関数が発動
 // event.target.textContentで押されたボタンの文字列を取得する
 // IF
-// displayContentが0のとき
+//  0が入力された時
+//  IF
+//   直前の文字が演算子のとき
+// 　isAfterOperatorをtrueにする
+//  IFEND
+// IF
+//  isAfterOperatorがtrueのとき
+//  直前の0を削除
+//  isAfterOperatorをfalseに戻す
+// IFEND
+// IF
+//  計算直後に数字ボタンを押された時
+//  押されたボタンの文字列をdisplayContentに代入する
+//  isCalculatedをfalseに戻す
+//  displayに表示
+// ELSEIF
+//  displayContentが0のとき
 // 　押されたボタンの文字列をdisplayContentに代入する
+// ELSE
 // displayContentが0以外のとき
 //   押されたボタンの文字列をdisplayContentに追加する
 // IFEND
@@ -73,7 +96,25 @@ let operator = null;
 numberButtons.forEach((button) =>
   button.addEventListener("click", (event) => {
     const buttonText = event.target.textContent;
-    if (displayContent === "0") {
+    if (
+      buttonText === "0" &&
+      (displayContent.slice(-1) === "+" ||
+        displayContent.slice(-1) === "-" ||
+        displayContent.slice(-1) === "*" ||
+        displayContent.slice(-1) === "/")
+    ) {
+      isAfterOperator = true;
+    }
+    // 演算子の直後に0があるとき0を削除
+    if (isAfterOperator) {
+      displayContent.slice(0, -1);
+      isAfterOperator = false;
+    }
+    // 計算直後
+    if (isCalculated) {
+      displayContent = buttonText;
+      isCalculated = false;
+    } else if (displayContent === "0") {
       displayContent = buttonText;
     } else {
       displayContent += buttonText;
@@ -83,6 +124,14 @@ numberButtons.forEach((button) =>
 );
 
 // 演算子ボタンが押された時の処理
+// IF
+//  isAfterOperatorがtrueのとき
+//  isAfterOperatorをfalseに戻す
+// IFEND
+// IF
+//  計算直後に演算子ボタンが押されたとき
+//  isCalculatedをfalseに戻す
+// IFEND
 // IF
 //  displayContentが0のとき
 // 　IF
@@ -118,6 +167,12 @@ numberButtons.forEach((button) =>
 operatorButtons.forEach((button) =>
   button.addEventListener("click", (event) => {
     const buttonText = event.target.textContent;
+    if (isAfterOperator) {
+      isAfterOperator = false;
+    }
+    if (isCalculated) {
+      isCalculated = false;
+    }
     if (displayContent === "0") {
       if (buttonText === "-") {
         displayContent = buttonText;
@@ -161,6 +216,10 @@ operatorButtons.forEach((button) =>
 //    isDecimal = false
 
 // IF
+//  isAfterOperatorがtrueのとき
+//  isAfterOperatorをfalseに戻す
+// IFEND
+// IF
 //  isDecimal = trueのとき
 //  IF
 //   displayContentの直前の文字が演算子のとき
@@ -181,6 +240,9 @@ commaButton.addEventListener("click", (event) => {
     array.lastIndexOf(".") < array.lastIndexOf("/") ||
     array.indexOf(".") === -1;
 
+  if (isAfterOperator) {
+    isAfterOperator = false;
+  }
   if (isDecimal) {
     //直前の文字が演算子のときは0.を追加
     if (
@@ -201,8 +263,28 @@ commaButton.addEventListener("click", (event) => {
 // displayContentを初期化
 // displayに表示
 // operatorを初期化
+// 判定系を初期化
 clearButton.addEventListener("click", () => {
-    displayContent = "0";
-    display.textContent = displayContent;
-    operator = null;
-})
+  displayContent = "0";
+  display.textContent = displayContent;
+  operator = null;
+  isAfterOperator = false;
+  isCalculated = false;
+});
+
+// イコールボタンが押された時の処理(数字2つと演算子1つの場合)
+// 入力された文字列をoperatorで区切り、[数字1,operator,数字2]の配列を得る
+// operatorを初期化
+// firstNumとsecondNumに数字1,2を保存
+// operate関数に引数を渡し、計算結果を得る
+// displayContentに保存
+// displayに表示
+
+equalButton.addEventListener("click", () => {
+  const opr = operator;
+  operator = null;
+  [firstNum, secondNum] = displayContent.split(`${opr}`);
+  displayContent = operate(opr, Number(firstNum), Number(secondNum));
+  display.textContent = displayContent;
+  isCalculated = true;
+});
