@@ -13,7 +13,7 @@ function subtract(a, b) {
 // あとで有効数字やエラー処理を追加
 function divide(a, b) {
   if (b !== 0) {
-    return a / b;
+    return Number((a / b).toPrecision(10));
   }
   return "error";
 }
@@ -70,16 +70,16 @@ let isAfterOperator = false;
 // displayに表示される文字列を更新する関数が発動
 // event.target.textContentで押されたボタンの文字列を取得する
 // IF
+//  isAfterOperatorがtrueのとき
+//  直前の0を削除
+//  isAfterOperatorをfalseに戻す
+// IFEND
+// IF
 //  0が入力された時
 //  IF
 //   直前の文字が演算子のとき
 // 　isAfterOperatorをtrueにする
 //  IFEND
-// IF
-//  isAfterOperatorがtrueのとき
-//  直前の0を削除
-//  isAfterOperatorをfalseに戻す
-// IFEND
 // IF
 //  計算直後に数字ボタンを押された時
 //  押されたボタンの文字列をdisplayContentに代入する
@@ -96,6 +96,13 @@ let isAfterOperator = false;
 numberButtons.forEach((button) =>
   button.addEventListener("click", (event) => {
     const buttonText = event.target.textContent;
+    // 演算子の直後に0があるとき0を削除
+    // 3 + 03みたいになるのを防ぐ
+    if (isAfterOperator) {
+      displayContent = displayContent.slice(0, -1);
+      isAfterOperator = false;
+    }
+    // 演算子の直後に0を入力したときisAfterOperatorをtrueにする
     if (
       buttonText === "0" &&
       (displayContent.slice(-1) === "+" ||
@@ -105,12 +112,8 @@ numberButtons.forEach((button) =>
     ) {
       isAfterOperator = true;
     }
-    // 演算子の直後に0があるとき0を削除
-    if (isAfterOperator) {
-      displayContent.slice(0, -1);
-      isAfterOperator = false;
-    }
-    // 計算直後
+
+    // 計算直後に数字を入力すると、新たに計算を始める
     if (isCalculated) {
       displayContent = buttonText;
       isCalculated = false;
@@ -272,7 +275,13 @@ clearButton.addEventListener("click", () => {
   isCalculated = false;
 });
 
+function clear() {}
+
 // イコールボタンが押された時の処理(数字2つと演算子1つの場合)
+// IF
+//  計算直後にもう一度押された場合
+//  イベント終了
+// IFEND
 // 入力された文字列をoperatorで区切り、[数字1,operator,数字2]の配列を得る
 // operatorを初期化
 // firstNumとsecondNumに数字1,2を保存
@@ -281,6 +290,10 @@ clearButton.addEventListener("click", () => {
 // displayに表示
 
 equalButton.addEventListener("click", () => {
+    // 計算直後に押された場合動作を終了
+  if (isCalculated) {
+    return;
+  }
   const opr = operator;
   operator = null;
   [firstNum, secondNum] = displayContent.split(`${opr}`);
