@@ -319,7 +319,7 @@ equalButton.addEventListener("click", () => {
   }
   const opr = operator;
   operator = null;
-  [firstNum, secondNum] = displayContent.split(`${opr}`);
+  const [firstNum, secondNum] = displayContent.split(`${opr}`);
   displayContent = operate(opr, Number(firstNum), Number(secondNum));
   display.textContent = displayContent;
   isCalculated = true;
